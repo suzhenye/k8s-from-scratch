@@ -37,7 +37,7 @@ as I work towards this goal.
 
 We start by bringing up a full cluster on a single machine:
 
-1. Bring up CoreOS on the bare metal.
+1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
 2. Bring up base services: etcd, fleet, flannel.
 3. Bring up Ceph on fleet.
 4. Bring up k8s master on fleet.
@@ -49,7 +49,7 @@ but the foundation is in place for us to scale out.
 
 From here, we can add a new machine with a simplified procedure:
 
-1. Bring up CoreOS on the bare metal.
+1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
 2. Bring up base services: etcd, fleet, flannel.
 
 At this point, fleet takes over and schedules Ceph and a k8s minion,
