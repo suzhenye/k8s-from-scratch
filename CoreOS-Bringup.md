@@ -5,11 +5,12 @@ few points of discussion that are specific to bringing up CoreOS on
 bare metal, versus cloud services.
 
 The most important is that a CoreOS installation out of the box _does
-not allow any remote access_. As such, providing a cloud-init
-configuration is not optional, even for bare metal. In this stage,
-we'll use an absolutely minimal cloud-init that will give us remote
-access after installation, and work on a more elaborate configuration
-in the next step.
+not allow any access, remote or local_. As such, providing a
+cloud-init configuration is not optional, even for bare metal.
+
+In this stage, we'll use an absolutely minimal cloud-init that will
+give us remote access after installation, and work on a more elaborate
+configuration in the next step.
 
 ## Getting CoreOS and booting it
 
