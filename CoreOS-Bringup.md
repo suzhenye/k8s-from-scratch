@@ -66,7 +66,9 @@ phase.
 We're going to start with the bare minimum cloud-init file:
 
 ```console
-gotmpl -out /tmp/cloud-init k8s-from-scratch/files/cloud-init-minimal hostname core01 ssh_key "cert-authority $(cat ~/mycluster/ca/ssh/user_ca.pub)"
+$ gotmpl -out /tmp/cloud-init k8s-from-scratch/files/cloud-init-minimal \
+    hostname core01 \
+    ssh_key "cert-authority $(cat ~/mycluster/ca/ssh/user_ca.pub)"
 ```
 
 This'll produce the following cloud-init file:
