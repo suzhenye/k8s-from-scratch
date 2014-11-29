@@ -22,6 +22,16 @@ as I work towards this goal.
 - Once bringup is complete, scaling out should require a minimum of
   effort - at most 10 minutes of manual labor, automatable down to
   zero.
+- A later revision of this doc will concern itself with bringing up a
+  _secure_ cluster, by securing cross-machine communication. However,
+  credential and PKI initialization is a bit much right now, so we're
+  going to first nail down the basic bringup procedure, then come back
+  and lace security into it.
+- In this version, we assume that an external actor is providing a
+  network with internet access and DHCP services that can be
+  configured with static leases. A $50 wifi router for
+  instance. Future versions may expand the bringup to cover that
+  actor.
 
 # General structure
 
