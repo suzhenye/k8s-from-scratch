@@ -23,4 +23,11 @@ If you're on another architecture, or prefer to build your own, you
 can instead grab [the repository](https://github.com/danderson/gotmpl)
 and build from that.
 
+Finally, we'll want a directory in which to store a small number of files:
+
+```console
+$ mkdir mycluster
+$ cd mycluster
+```
+
 Next, let's [bring up CoreOS](/CoreOS-Bringup.md).
