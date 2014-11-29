@@ -22,11 +22,6 @@ as I work towards this goal.
 - Once bringup is complete, scaling out should require a minimum of
   effort - at most 10 minutes of manual labor, automatable down to
   zero.
-- A later revision of this doc will concern itself with bringing up a
-  _secure_ cluster, by securing cross-machine communication. However,
-  credential and PKI initialization is a bit much right now, so we're
-  going to first nail down the basic bringup procedure, then come back
-  and lace security into it.
 - In this version, we assume that an external actor is providing a
   network with internet access and DHCP services that can be
   configured with static leases. A $50 wifi router for
@@ -37,12 +32,13 @@ as I work towards this goal.
 
 We start by bringing up a full cluster on a single machine:
 
-0. [Collect prerequisites](/Prerequisites.md).
+1. [Collect prerequisites](/Prerequisites.md).
+1. [Create security roots of trust](/Security.md)
 1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
-2. Bring up base services: etcd, fleet, flannel.
-3. Bring up Ceph on fleet.
-4. Bring up k8s master on fleet.
-5. Bring up k8s minion on fleet.
+1. Bring up base services: etcd, fleet, flannel.
+1. Bring up Ceph on fleet.
+1. Bring up k8s master on fleet.
+1. Bring up k8s minion on fleet.
 
 At this point, we have a working single-machine k8s
 cluster. Reliability is currently nil, due to the lack of replication,
@@ -51,7 +47,7 @@ but the foundation is in place for us to scale out.
 From here, we can add a new machine with a simplified procedure:
 
 1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
-2. Bring up base services: etcd, fleet, flannel.
+1. Bring up base services: etcd, fleet, flannel.
 
 At this point, fleet takes over and schedules Ceph and a k8s minion,
 completing the bringup for us.
