@@ -37,6 +37,7 @@ as I work towards this goal.
 
 We start by bringing up a full cluster on a single machine:
 
+0. [Collect prerequisites](/Prerequisites.md).
 1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
 2. Bring up base services: etcd, fleet, flannel.
 3. Bring up Ceph on fleet.
