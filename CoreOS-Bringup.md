@@ -61,9 +61,9 @@ passwd: password changed.
 The password need not be fancy, it won't persist past the installation
 phase.
 
-## Copy a basic cloud-init file
+## Create and copy a basic cloud-init file.
 
-Bring up your favorite editor, and save the following as `cloud-init`:
+We're going to start with the bare minimum cloud-init file:
 
 ```yaml
 #cloud-config
@@ -71,11 +71,13 @@ Bring up your favorite editor, and save the following as `cloud-init`:
 hostname: core01
 ssh_authorized_keys:
 - ssh-rsa AAAAB...Ww==
-- ssh-rsa AAAAB...Ww==
 ```
 
-Insert your own SSH public key(s) in the appropriate spots. And of
-course, you can name the host anything you want.
+Insert your own SSH public key in the appropriate spot. Or, using gotmpl:
+
+```console
+$ gotmpl -out cloud-init k8s-from-scratch/files/cloud-init-minimal hostname=core01 ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+```
 
 Copy this file to the CoreOS ramdisk:
 
@@ -87,15 +89,27 @@ cloud-init 100% 500     5.3KB/s   00:00
 
 ## Install CoreOS
 
-Finally, we're ready to install CoreOS to the server's hard drive.
+Finally, we're ready to install CoreOS to the server's hard drive. First, identify the appropriate block device for the CoreOS hard drive:
 
 ```console
-$ sudo coreos-install -d /dev/sda -C stable -c cloud-init
+$ lsblk
+NAME                        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                           8:0    0 119.2G  0 disk  
+```
+
+On my machine, that's `/dev/sda`, but yours may be different. Then, install CoreOS:
+
+```console
+$ sudo coreos-install -d /dev/sda -c cloud-init
 ```
 
 Once the installation finishes, remove the USB stick and reboot into
-your fresh CoreOS installation. From here on, we'll only interact with
-this machine remotely.
+your fresh CoreOS installation. From here on, we can interact remotely
+with the machine over ssh. Verify this now by logging in:
+
+```console
+$ ssh core@<ip address>
+```
 
 ## Optional: set a backup root password
 
@@ -119,4 +133,7 @@ Re-enter new password:
 passwd: password changed.
 ```
 
-That's it! Basic CoreOS bringup is done.
+If you want to disable ssh-as-root, stay tuned, we'll do that in the
+next chapter.
+
+That's it! Basic CoreOS bringup is done. Next up is [bringing up base services](/Base-Services-Bringup.md).
