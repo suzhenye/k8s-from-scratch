@@ -22,3 +22,5 @@ $ chmod +x gotmpl
 If you're on another architecture, or prefer to build your own, you
 can instead grab [the repository](https://github.com/danderson/gotmpl)
 and build from that.
+
+Next, let's [bring up CoreOS](/CoreOS-Bringup.md).
