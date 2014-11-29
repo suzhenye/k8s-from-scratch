@@ -30,4 +30,11 @@ $ mkdir mycluster
 $ cd mycluster
 ```
 
+It's a good idea to version control this directory, if you're into that:
+
+```console
+$ git init
+Initialized empty Git repository in /home/dave/mycluster/.git/
+```
+
 Next, let's [bring up CoreOS](/CoreOS-Bringup.md).
