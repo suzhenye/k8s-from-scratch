@@ -2,4 +2,4 @@
 
 hostname: {{.hostname}}
 ssh_authorized_keys
-- {{.ssh_key}}
+- cert-authority {{.ssh_key}}
