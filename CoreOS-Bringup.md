@@ -65,18 +65,18 @@ phase.
 
 We're going to start with the bare minimum cloud-init file:
 
+```console
+gotmpl -out /tmp/cloud-init k8s-from-scratch/files/cloud-init-minimal hostname core01 ssh_key "cert-authority $(cat ~/mycluster/ca/ssh/user_ca.pub)"
+```
+
+This'll produce the following cloud-init file:
+
 ```yaml
 #cloud-config
 
 hostname: core01
-ssh_authorized_keys:
-- ssh-rsa AAAAB...Ww==
-```
-
-Insert your own SSH public key in the appropriate spot. Or, using gotmpl:
-
-```console
-$ gotmpl -out cloud-init k8s-from-scratch/files/cloud-init-minimal hostname=core01 ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+ssh_authorized_keys
+- cert-authority ssh-rsa AAAAB...w== user-ca
 ```
 
 Copy this file to the CoreOS ramdisk:

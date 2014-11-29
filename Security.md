@@ -37,7 +37,7 @@ machines.
 $ cd ~/mycluster/ca
 $ mkdir ssh
 $ cd ssh
-$ ssh-keygen -f machine_ca
+$ ssh-keygen -f machine_ca -C machine-ca
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
@@ -45,7 +45,7 @@ Your identification has been saved in machine_ca.
 Your public key has been saved in machine_ca.pub.
 The key fingerprint is:
 9a:d1:a2:31:05:3d:1c:7c:c6:73:09:a5:88:c7:ec:dd dave@alya
-$ ssh-keygen -f user_ca
+$ ssh-keygen -f user_ca -C user-ca
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
