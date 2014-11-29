@@ -1,10 +1,13 @@
-k8s-from-scratch
-================
+# Kubernetes From Scratch
 
 Kubernetes From Scratch, an LFS analog for standing up a robust
 Kubernetes cluster on bare metal.
 
-Rules of engagement:
+This is very much a WIP, and is currently a braindump of my own notes
+as I work towards this goal.
+
+# Rules of engagement
+
 - No cloud services required to run the cluster. If we use L3/L7 load
   balancing, five nines datastores and so forth, we beg the question
   of bringing up a cluster by relying on another cluster that we don't
