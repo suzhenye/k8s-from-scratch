@@ -19,7 +19,6 @@ In the meantime, you can hack up your CoreOS installation to run 0.5.0 ahead of 
 
 ```console
 core01$ sudo mkdir -p /opt
-core01$ docker pull quay.io/coreos/etcd-git:latest
 core01$ docker run --name etcd-git quay.io/coreos/etcd-git:latest /go/bin/etcd --version
 core01$ docker cp etcd-git:/go/bin/etcd /opt/etcd
 core01$ docker rm -v -f etcd-git
