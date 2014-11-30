@@ -148,11 +148,11 @@ keys, sign them, and push the certificates back:
 
 ```console
 admin$ export SIGN_TMP=$(mktemp -d)
-admin$ scp core@$INSTALLER_IP:'/mnt/etc/ssh/ssh_host_*.pub' $SIGN_TMP
-admin$ for i in $SIGN_TMP/ssh_host_*.pub; do \
+admin$ scp core@$INSTALLER_IP:'/mnt/etc/ssh/ssh_host_*_key.pub' $SIGN_TMP
+admin$ for i in $SIGN_TMP/*.pub; do \
          ssh-keygen -s $SSH_CA/machine_ca -I core01 -h $i; \
        done
-admin$ scp $SIGN_TMP/ssh_host_*-cert.pub core@$INSTALLER_IP:
+admin$ scp $SIGN_TMP/*-cert.pub core@$INSTALLER_IP:
 admin$ rm -rf $SIGN_TMP
 ```
 
@@ -160,9 +160,9 @@ We can't copy the certs straight into the final directory, because
 core@ isn't allowed to do that. However, we can sudo-move them now:
 
 ```console
-ramdisk$ sudo mv ssh_host_*-cert.pub /mnt/etc/ssh
-ramdisk$ sudo chown 0:0 /mnt/etc/ssh/ssh_host_*-cert.pub
-ramdisk$ sudo chmod 0644 /mnt/etc/ssh/ssh_host_*-cert.pub
+ramdisk$ sudo mv *-cert.pub /mnt/etc/ssh
+ramdisk$ sudo chown 0:0 /mnt/etc/ssh/*-cert.pub
+ramdisk$ sudo chmod 0644 /mnt/etc/ssh/*-cert.pub
 ```
 
 There's one final step to perform, which is to register these
@@ -174,7 +174,7 @@ first.
 ```console
 ramdisk$ rm /mnt/etc/ssh/sshd_config
 ramdisk$ cp /usr/share/ssh/sshd_config /mnt/etc/ssh/sshd_config
-ramdisk$ for i in /mnt/etc/ssh/ssh_host_*-cert.pub; do \
+ramdisk$ for i in /mnt/etc/ssh/*-cert.pub; do \
            echo "HostCertificate /etc/ssh/$(basename $i)" >>/mnt/etc/ssh/sshd_config; \
          done
 ```
