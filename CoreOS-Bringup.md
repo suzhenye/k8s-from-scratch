@@ -154,6 +154,7 @@ admin$ for i in $SIGN_TMP/*.pub; do \
        done
 admin$ scp $SIGN_TMP/*-cert.pub core@$INSTALLER_IP:
 admin$ rm -rf $SIGN_TMP
+admin$ unset SIGN_TMP
 ```
 
 We can't copy the certs straight into the final directory, because
