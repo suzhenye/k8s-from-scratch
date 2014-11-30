@@ -171,13 +171,12 @@ certificates in the sshd configuration, so that it presents them to
 users connecting.
 
 ```console
-ramdisk$ cp /usr/share/ssh/sshd_config sshd_config
-ramdisk$ for i in /mnt/etc/ssh/*-cert.pub; do \
-           echo "HostCertificate /etc/ssh/$(basename $i)" >>sshd_config; \
+ramdisk$ sudo -s
+ramdisk# cp /usr/share/ssh/sshd_config /mnt/etc/ssh/sshd_config
+ramdisk# for i in /mnt/etc/ssh/*-cert.pub; do \
+           echo "HostCertificate /etc/ssh/$(basename $i)" >>/mnt/etc/ssh/sshd_config; \
            done
-ramdisk$ sudo mv sshd_config /mnt/etc/ssh
-ramdisk$ sudo chown 0:0 /mnt/etc/ssh/sshd_config
-ramdisk$ sudo chmod 0640 /mnt/etc/ssh/sshd_config
+ramdisk# exit
 ```
 
 ```
