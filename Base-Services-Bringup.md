@@ -18,23 +18,23 @@ this on the assumption that you're running 0.5.0.
 In the meantime, you can hack up your CoreOS installation to run 0.5.0 ahead of time, by running the following on the CoreOS machine:
 
 ```console
-$ sudo mkdir -p /opt
-$ docker pull quay.io/coreos/etcd-git:latest
-$ docker run --name etcd-git quay.io/coreos/etcd-git:latest /go/bin/etcd --version
-$ docker cp etcd-git:/go/bin/etcd /opt/etcd
-$ docker rm -v -f etcd-git
-$ sudo mkdir -p /etc/systemd/system/etcd.service.d
-$ sudo cat >/etc/systemd/system/etcd.service.d/git.conf <<EOF
+core01$ sudo mkdir -p /opt
+core01$ docker pull quay.io/coreos/etcd-git:latest
+core01$ docker run --name etcd-git quay.io/coreos/etcd-git:latest /go/bin/etcd --version
+core01$ docker cp etcd-git:/go/bin/etcd /opt/etcd
+core01$ docker rm -v -f etcd-git
+core01$ sudo mkdir -p /etc/systemd/system/etcd.service.d
+core01$ sudo cat >/etc/systemd/system/etcd.service.d/git.conf <<EOF
 [Service]
 ExecStart=/opt/etcd
 EOF
-$ sudo systemctl restart etcd
+core01$ sudo systemctl restart etcd
 ```
 
 To undo it later, when etcd 0.5.0 is in CoreOS:
 
 ```console
-$ sudo rm -f /opt/etcd
-$ sudo rm -f /etc/systemd/system/etcd.service.d/git.conf
-$ sudo systemctl restart etcd
+core01$ sudo rm -f /opt/etcd
+core01$ sudo rm -f /etc/systemd/system/etcd.service.d/git.conf
+core01$ sudo systemctl restart etcd
 ```

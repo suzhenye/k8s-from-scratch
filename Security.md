@@ -11,8 +11,8 @@ trust hierarchies.
 We'll put all our roots of trust in our cluster directory:
 
 ```console
-$ cd ~/mycluster
-$ mkdir ca
+admin$ cd ~/mycluster
+admin$ mkdir ca
 ```
 
 ## SSH CA
@@ -34,10 +34,10 @@ machines, and user certificates cannot be used to impersonate
 machines.
 
 ```console
-$ cd ~/mycluster/ca
-$ mkdir ssh
-$ cd ssh
-$ ssh-keygen -f machine_ca -C machine-ca
+admin$ cd ~/mycluster/ca
+admin$ mkdir ssh
+admin$ cd ssh
+admin$ ssh-keygen -f machine_ca -C machine-ca
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
@@ -45,7 +45,7 @@ Your identification has been saved in machine_ca.
 Your public key has been saved in machine_ca.pub.
 The key fingerprint is:
 9a:d1:a2:31:05:3d:1c:7c:c6:73:09:a5:88:c7:ec:dd dave@alya
-$ ssh-keygen -f user_ca -C user-ca
+admin$ ssh-keygen -f user_ca -C user-ca
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
@@ -72,7 +72,7 @@ machine CA.
 First, let's create ourselves a user certificate:
 
 ```console
-$ ssh-keygen -f ~/.ssh/mycluster
+admin$ ssh-keygen -f ~/.ssh/mycluster
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
@@ -80,7 +80,7 @@ Your identification has been saved in ~/.ssh/mycluster.
 Your public key has been saved in ~/.ssh/mycluster.pub.
 The key fingerprint is:
 c2:89:0b:2b:df:f6:2b:e9:9e:20:e7:bd:4d:5e:30:f4 dave@alya
-$ ssh-keygen -s user_ca -n core -I "Your Name <your.email@example.com>" ~/.ssh/mycluster.pub
+admin$ ssh-keygen -s user_ca -n core -I "Your Name <your.email@example.com>" ~/.ssh/mycluster.pub
 Signed user key ~/.ssh/mycluster.pub: id "Your Name <your.email@example.com>" serial 0 for core valid forever
 ```
 
@@ -92,7 +92,7 @@ ever.
 Finally, add the machine CA to your known_hosts:
 
 ```console
-$ echo "@cert-authority * $(cat machine_ca.pub)" >>~/.ssh/known_hosts
+admin$ echo "@cert-authority * $(cat machine_ca.pub)" >>~/.ssh/known_hosts
 ```
 
 And with that, SSH root of trust setup is done.
