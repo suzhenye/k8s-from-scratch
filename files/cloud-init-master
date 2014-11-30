@@ -1,7 +1,7 @@
 #cloud-config
 
 hostname: {{.hostname}}
-ssh_authorized_keys
+ssh_authorized_keys:
 - cert-authority {{.ssh_key}}
 manage_etc_hosts: localhost
 coreos:
