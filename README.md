@@ -47,7 +47,7 @@ but the foundation is in place for us to scale out.
 From here, we can add a new machine with a simplified procedure:
 
 1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
-1. Bring up base services: etcd, fleet, flannel.
+1. [Bring up base services](/Base-Services-Bringup.md).
 
 At this point, fleet takes over and schedules Ceph and a k8s minion,
 completing the bringup for us.
