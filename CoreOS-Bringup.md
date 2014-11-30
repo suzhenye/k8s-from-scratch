@@ -174,8 +174,10 @@ users connecting.
 ramdisk$ cp /usr/share/ssh/sshd_config sshd_config
 ramdisk$ for i in /mnt/etc/ssh/*-cert.pub; do \
            echo "HostCertificate /etc/ssh/$(basename $i)" >>sshd_config; \
-         done
+           done
 ramdisk$ sudo mv sshd_config /mnt/etc/ssh
+ramdisk$ sudo chown 0:0 /mnt/etc/ssh/sshd_config
+ramdisk$ sudo chmod 0640 /mnt/etc/ssh/sshd_config
 ```
 
 ```
