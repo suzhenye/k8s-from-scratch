@@ -1,0 +1,14 @@
+#cloud-config
+
+hostname: {{.hostname}}
+ssh_authorized_keys
+- cert-authority {{.ssh_key}}
+manage_etc_hosts: localhost
+coreos:
+  update:
+    reboot-strategy: etcd-lock
+  units:
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
