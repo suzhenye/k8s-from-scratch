@@ -105,13 +105,87 @@ On my machine, that's `/dev/sda`, but yours may be different. Then, install Core
 $ sudo coreos-install -d /dev/sda -c cloud-init
 ```
 
-Once the installation finishes, remove the USB stick and reboot into
-your fresh CoreOS installation. From here on, we can interact remotely
-with the machine over ssh. Verify this now by logging in:
+## Set up SSH host certs
+
+Before we reboot into the fresh system, we need to sign the new
+machine's host certificates, so that our authentication Just
+Works. The problem is that, by default, the host keys are generated
+during the first boot by a systemd unit, at which point we don't have
+a good way of pushing host certs to the machine.
+
+There are better ways to deal with this once we have PKI-integrated
+PXE booting, but for now, we can just mount the filesystem and set up
+SSH by hand. So, let's mount the necessaries on /mnt:
+
+```console
+$ sudo mount -o subvol=root /dev/sda9 /mnt
+$ sudo mount -o bind /usr /mnt/usr
+$ sudo mount -o bind /dev /mnt/dev
+```
+
+/usr is necessary because the basic root filesystem doesn't have any
+programs, and /dev is needed for both /dev/null and /dev/urandom. Now
+though, we can generate the host SSH keys, and undo the bind mounts.
+
+```console
+$ sudo chroot /mnt /usr/bin/ssh-keygen -A
+$ sudo umount /mnt/dev
+$ sudo umount /mnt/usr
+```
+
+Now, from the machine with the SSH CA keys, we grab the host public
+keys, sign them, and push the certificates back:
+
+```console
+$ scp core@<ip address>:'/mnt/etc/ssh/ssh_host_*.pub' .
+$ for i in ssh_host_*.pub; do \
+    ssh-keygen -s ~/mycluster/ca/ssh/machine_ca -I core01 -h $i; \
+  done
+$ scp ssh_host_*-cert.pub core@<ip address>:
+$ rm ssh_host_*.pub
+```
+
+We can't copy the certs straight into the final directory, because
+core@ isn't allowed to do that. However, we can sudo-move them now:
+
+```console
+$ sudo mv ssh_host_*-cert.pub /mnt/etc/ssh
+$ sudo chown 0:0 /mnt/etc/ssh/ssh_host_*-cert.pub
+$ sudo chmod 0644 /mnt/etc/ssh/ssh_host_*-cert.pub
+```
+
+There's one final step to perform, which is to register these
+certificates in the sshd configuration, so that it presents them to
+users connecting. So, on the server:
+
+```console
+$ rm /mnt/etc/ssh/sshd_config
+$ cp /usr/share/ssh/sshd_config /mnt/etc/ssh/sshd_config
+$ for i in /mnt/etc/ssh/ssh_host_*-cert.pub; do \
+    echo "HostCertificate /etc/ssh/$(basename $i)" >>/mnt/etc/ssh/sshd_config; \
+  done
+```
+
+```
+TODO: do this a bit more nicely in cloud-init, rather than by hand.
+```
+
+We're done now. Remove the USB stick, and reboot:
+
+```console
+$ sudo reboot
+```
+
+If nothing went wrong, the server will boot to disk, and present you
+with a nice CoreOS login prompt. At this point, you can only interact
+with the machine remotely, so try that now:
 
 ```console
 $ ssh core@<ip address>
 ```
+
+This should log you in with no host verification prompt and no
+password.
 
 ## Optional: set a backup root password
 
