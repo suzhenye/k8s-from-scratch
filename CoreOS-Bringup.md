@@ -41,6 +41,13 @@ ramdisk$ sudo ip link
     link/ether 52:54:00:8b:0e:0f brd ff:ff:ff:ff:ff:ff
 ```
 
+Either way, for now, let's remember the ramdisk's IP (substitute your
+own):
+
+```console
+admin$ export INSTALLER_IP=192.168.42.10
+```
+
 ## Enable temporary remote access
 
 We're going to have to copy a cloud-init configuration to the server,
@@ -66,9 +73,9 @@ phase.
 We're going to start with the bare minimum cloud-init file:
 
 ```console
-admin$ gotmpl -out /tmp/cloud-init k8s-from-scratch/files/cloud-init-minimal \
+admin$ gotmpl $K8SFS/files/cloud-init-minimal \
     hostname core01 \
-    ssh_key "$(cat ~/mycluster/ca/ssh/user_ca.pub)"
+    ssh_key "$(cat $SSH_CA/user_ca.pub)"
 ```
 
 This'll produce the following cloud-init file:
@@ -84,8 +91,8 @@ ssh_authorized_keys
 Copy this file to the CoreOS ramdisk:
 
 ```console
-admin$ scp cloud-init core@192.168.1.2:
-core@192.168.1.2's password:
+admin$ scp cloud-init core@$INSTALLER_IP:
+Password:
 cloud-init 100% 500     5.3KB/s   00:00
 ```
 
@@ -99,7 +106,8 @@ NAME                        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 sda                           8:0    0 119.2G  0 disk  
 ```
 
-On my machine, that's `/dev/sda`, but yours may be different. Then, install CoreOS:
+On my machine, that's `/dev/sda`, but yours may be different. Install
+CoreOS to that device, specifying our minimal cloud-init:
 
 ```console
 ramdisk$ sudo coreos-install -d /dev/sda -c cloud-init
@@ -137,12 +145,13 @@ Now, from the machine with the SSH CA keys, we grab the host public
 keys, sign them, and push the certificates back:
 
 ```console
-admin$ scp core@<ip address>:'/mnt/etc/ssh/ssh_host_*.pub' .
-admin$ for i in ssh_host_*.pub; do \
-         ssh-keygen -s ~/mycluster/ca/ssh/machine_ca -I core01 -h $i; \
+admin$ export SIGN_TMP=$(mktemp -d)
+admin$ scp core@$INSTALLER_IP:'/mnt/etc/ssh/ssh_host_*.pub' $SIGN_TMP
+admin$ for i in $SIGN_TMP/ssh_host_*.pub; do \
+         ssh-keygen -s $SSH_CA/machine_ca -I core01 -h $i; \
        done
-admin$ scp ssh_host_*-cert.pub core@<ip address>:
-admin$ rm ssh_host_*.pub
+admin$ scp $SIGN_TMP/ssh_host_*-cert.pub core@$INSTALLER_IP:
+admin$ rm -rf $SIGN_TMP
 ```
 
 We can't copy the certs straight into the final directory, because
@@ -156,7 +165,9 @@ ramdisk$ sudo chmod 0644 /mnt/etc/ssh/ssh_host_*-cert.pub
 
 There's one final step to perform, which is to register these
 certificates in the sshd configuration, so that it presents them to
-users connecting. So, on the server:
+users connecting. On CoreOS, the default sshd_config is a symlink to
+the read-only vendor partition, so we need to make it mutable
+first.
 
 ```console
 ramdisk$ rm /mnt/etc/ssh/sshd_config
@@ -181,11 +192,22 @@ with a nice CoreOS login prompt. At this point, you can only interact
 with the machine remotely, so try that now:
 
 ```console
-admin$ ssh core@<ip address>
+admin$ ssh core@$INSTALLER_IP
 ```
 
 This should log you in with no host verification prompt and no
 password.
+
+And just for cleanliness, let's promote the environment variable we
+were using:
+
+```console
+admin$ export CORE01=$INSTALLER_IP
+admin$ unset INSTALLER_IP
+```
+
+If you changed the DHCP lease settings earlier, you may need to adjust
+this to specify the new IP for the machine.
 
 ## Optional: set a backup root password
 

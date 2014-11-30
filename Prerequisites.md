@@ -57,16 +57,26 @@ and build from that.
 Finally, we'll want a directory in which to store a small number of files:
 
 ```console
-admin$ export CDIR=~/mycluster
-admin$ mkdir $CDIR
-admin$ cd $CDIR
+admin$ mkdir ~/cluster
 ```
 
 It's a good idea to version control this directory, if you're into that:
 
 ```console
 admin$ git init
-Initialized empty Git repository in /home/dave/mycluster/.git/
+Initialized empty Git repository in /home/dave/cluster/.git/
 ```
 
-Next, let's [bring up CoreOS](/CoreOS-Bringup.md).
+## Environment variables
+
+We're going to be referring to a number of directories and names
+during bringup, and to keep it generic we're going to define a few
+environment variables that we'll refer to in the instructions.
+
+```console
+admin$ export CLUSTER_DIR=~/cluster
+admin$ export K8SFS=~/k8s-from-scratch
+```
+
+Keep a look out for other variables that we'll define for some of the
+steps.

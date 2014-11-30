@@ -8,13 +8,6 @@ All security in our cluster is going to be certificate-based, so we're
 going to create a number of certificate authorities to manage those
 trust hierarchies.
 
-We'll put all our roots of trust in our cluster directory:
-
-```console
-admin$ cd ~/mycluster
-admin$ mkdir ca
-```
-
 ## SSH CA
 
 A little known feature of SSH is that is supports certificate
@@ -34,10 +27,9 @@ machines, and user certificates cannot be used to impersonate
 machines.
 
 ```console
-admin$ cd ~/mycluster/ca
-admin$ mkdir ssh
-admin$ cd ssh
-admin$ ssh-keygen -f machine_ca -C machine-ca
+admin$ export SSH_CA=$CLUSTER_DIR/ca/ssh
+admin$ mkdir -p $SSH_CA
+admin$ ssh-keygen -f $SSH_CA/machine_ca -C machine-ca
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
@@ -45,7 +37,8 @@ Your identification has been saved in machine_ca.
 Your public key has been saved in machine_ca.pub.
 The key fingerprint is:
 9a:d1:a2:31:05:3d:1c:7c:c6:73:09:a5:88:c7:ec:dd dave@alya
-admin$ ssh-keygen -f user_ca -C user-ca
+
+admin$ ssh-keygen -f $SSH_CA/user_ca -C user-ca
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
@@ -72,27 +65,30 @@ machine CA.
 First, let's create ourselves a user certificate:
 
 ```console
-admin$ ssh-keygen -f ~/.ssh/mycluster
+admin$ ssh-keygen -f ~/.ssh/cluster_admin
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
 Enter same passphrase again: 
-Your identification has been saved in ~/.ssh/mycluster.
-Your public key has been saved in ~/.ssh/mycluster.pub.
+Your identification has been saved in ~/.ssh/cluster_admin.
+Your public key has been saved in ~/.ssh/cluster_admin.pub.
 The key fingerprint is:
 c2:89:0b:2b:df:f6:2b:e9:9e:20:e7:bd:4d:5e:30:f4 dave@alya
-admin$ ssh-keygen -s user_ca -n core -I "Your Name <your.email@example.com>" ~/.ssh/mycluster.pub
-Signed user key ~/.ssh/mycluster.pub: id "Your Name <your.email@example.com>" serial 0 for core valid forever
+
+admin$ ssh-keygen -s $SSH_CA/user_ca \
+         -n core -I "Your Name <your.email@example.com>" \
+         ~/.ssh/cluster_admin.pub
+Signed user key ~/.ssh/cluster_admin.pub: id "Your Name <your.email@example.com>" serial 0 for core valid forever
 ```
 
-You should now have a file `~/.ssh/mycluster-cert.pub` in addition to
-your public and private keys. This certificate will allow you to log
-in as user `core`, on any machine that recognizes your user CA, for
-ever.
+You should now have a file `~/.ssh/cluster_admin-cert.pub` in addition
+to your public and private keys. This certificate will allow you to
+log in as user `core`, on any machine that recognizes your user CA,
+for ever.
 
 Finally, add the machine CA to your known_hosts:
 
 ```console
-admin$ echo "@cert-authority * $(cat machine_ca.pub)" >>~/.ssh/known_hosts
+admin$ echo "@cert-authority * $(cat $SSH_CA/machine_ca.pub)" >>~/.ssh/known_hosts
 ```
 
 And with that, SSH root of trust setup is done.
