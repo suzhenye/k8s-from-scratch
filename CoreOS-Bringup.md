@@ -75,7 +75,8 @@ We're going to start with the bare minimum cloud-init file:
 ```console
 admin$ gotmpl $K8SFS/files/cloud-init-minimal \
     hostname core01 \
-    ssh_key "$(cat $SSH_CA/user_ca.pub)"
+    ssh_key "$(cat $SSH_CA/user_ca.pub)" \
+    >$CLUSTER_DIR/cloud-init
 ```
 
 This'll produce the following cloud-init file:
@@ -91,9 +92,10 @@ ssh_authorized_keys
 Copy this file to the CoreOS ramdisk:
 
 ```console
-admin$ scp cloud-init core@$INSTALLER_IP:
+admin$ scp $CLUSTER_DIR/cloud-init core@$INSTALLER_IP:
 Password:
 cloud-init 100% 500     5.3KB/s   00:00
+admin$ rm $CLUSTER_DIR/cloud-init
 ```
 
 ## Install CoreOS
