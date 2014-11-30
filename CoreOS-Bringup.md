@@ -168,12 +168,9 @@ ramdisk$ sudo chmod 0644 /mnt/etc/ssh/*-cert.pub
 
 There's one final step to perform, which is to register these
 certificates in the sshd configuration, so that it presents them to
-users connecting. On CoreOS, the default sshd_config is a symlink to
-the read-only vendor partition, so we need to make it mutable
-first.
+users connecting.
 
 ```console
-ramdisk$ rm /mnt/etc/ssh/sshd_config
 ramdisk$ cp /usr/share/ssh/sshd_config /mnt/etc/ssh/sshd_config
 ramdisk$ for i in /mnt/etc/ssh/*-cert.pub; do \
            echo "HostCertificate /etc/ssh/$(basename $i)" >>/mnt/etc/ssh/sshd_config; \
