@@ -211,29 +211,4 @@ admin$ unset INSTALLER_IP
 If you changed the DHCP lease settings earlier, you may need to adjust
 this to specify the new IP for the machine.
 
-## Optional: set a backup root password
-
-Unlike cloud VMs, we don't have an emergency backdoor into our system
-courtesy of the cloud provider, so we should set our own up, in the
-form of a root password.
-
-Since this will be seldom used, you have two options: either make the
-password very long and random (for instance, `pwgen -s 30`), or make
-it short and memorable, but disable ssh-as-root. In that case, in an
-emergency you'd need to be physically at the machine's console to get
-access.
-
-```console
-core01$ sudo passwd
-Changing password for root
-Enter the new password (minimum of 5 characters)
-Please use a combination of upper and lower case letters and numbers.
-New password: 
-Re-enter new password: 
-passwd: password changed.
-```
-
-If you want to disable ssh-as-root, stay tuned, we'll do that in the
-next chapter.
-
 That's it! Basic CoreOS bringup is done. Next up is [bringing up base services](/Base-Services-Bringup.md).
