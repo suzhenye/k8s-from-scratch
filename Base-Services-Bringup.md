@@ -2,38 +2,3 @@
 
 Now that CoreOS is installed, we need to bring up the basic machine
 services that Kubernetes requires. These are etcd, fleet and flannel.
-
-The configuration here varies slightly depending on whether we're
-setting up a k8s master, or a simple minion. The primary difference is
-that we want to set up etcd as a peering master on a master machine,
-and as a simple proxy on minions.
-
-### Confession
-
-Etcd proxy mode is a new feature in etcd 0.5.0, which at the time of
-writing isn't released or integrated in CoreOS yet. However, it makes
-secure and config-free setup so much easier that I'm going to write
-this on the assumption that you're running 0.5.0.
-
-In the meantime, you can hack up your CoreOS installation to run 0.5.0 ahead of time, by running the following on the CoreOS machine:
-
-```console
-core01$ sudo mkdir -p /opt
-core01$ docker run --name etcd-git quay.io/coreos/etcd-git:latest /go/bin/etcd --version
-core01$ docker cp etcd-git:/go/bin/etcd /opt/etcd
-core01$ docker rm -v -f etcd-git
-core01$ sudo mkdir -p /etc/systemd/system/etcd.service.d
-core01$ sudo cat >/etc/systemd/system/etcd.service.d/git.conf <<EOF
-[Service]
-ExecStart=/opt/etcd
-EOF
-core01$ sudo systemctl restart etcd
-```
-
-To undo it later, when etcd 0.5.0 is in CoreOS:
-
-```console
-core01$ sudo rm -f /opt/etcd
-core01$ sudo rm -f /etc/systemd/system/etcd.service.d/git.conf
-core01$ sudo systemctl restart etcd
-```
