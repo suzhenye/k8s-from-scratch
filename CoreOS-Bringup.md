@@ -135,12 +135,10 @@ ramdisk$ sudo mount -o bind /dev /mnt/dev
 
 /usr is necessary because the basic root filesystem doesn't have any
 programs, and /dev is needed for both /dev/null and /dev/urandom. Now
-though, we can generate the host SSH keys, and undo the bind mounts.
+though, we can generate the host SSH keys.
 
 ```console
 ramdisk$ sudo chroot /mnt /usr/bin/ssh-keygen -A
-ramdisk$ sudo umount /mnt/dev
-ramdisk$ sudo umount /mnt/usr
 ```
 
 Now, from the machine with the SSH CA keys, we grab the host public
@@ -149,7 +147,7 @@ keys, sign them, and push the certificates back:
 ```console
 admin$ export SIGN_TMP=$(mktemp -d)
 admin$ scp core@$INSTALLER_IP:'/mnt/etc/ssh/ssh_host_*_key.pub' $SIGN_TMP
-admin$ for i in $SIGN_TMP/*.pub; do \
+admin$ for i in $SIGN_TMP/*_key.pub; do \
          ssh-keygen -s $SSH_CA/machine_ca -I core01 -h $i; \
        done
 admin$ scp $SIGN_TMP/*-cert.pub core@$INSTALLER_IP:
