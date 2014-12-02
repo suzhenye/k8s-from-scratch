@@ -61,6 +61,13 @@ to your public and private keys. This certificate will allow you to
 log in as user `core`, on any machine that recognizes your user CA,
 for ever.
 
+Annoyingly, ssh won't automatically use this certified key unless you
+add it to your SSH agent by hand:
+
+```console
+admin$ ssh-add ~/.ssh/cluster_admin
+```
+
 Finally, add the machine CA to your known_hosts:
 
 ```console
