@@ -57,12 +57,6 @@ setting a password so that we can connect:
 
 ```console
 ramdisk$ sudo passwd core
-Changing password for core
-Enter the new password (minimum of 5 characters)
-Please use a combination of upper and lower case letters and numbers.
-New password: 
-Re-enter new password: 
-passwd: password changed.
 ```
 
 The password need not be fancy, it won't persist past the installation
@@ -93,23 +87,17 @@ Copy this file to the CoreOS ramdisk:
 
 ```console
 admin$ scp $CLUSTER_DIR/cloud-init core@$INSTALLER_IP:
-Password:
-cloud-init 100% 500     5.3KB/s   00:00
 admin$ rm $CLUSTER_DIR/cloud-init
 ```
 
 ## Install CoreOS
 
-Finally, we're ready to install CoreOS to the server's hard drive. First, identify the appropriate block device for the CoreOS hard drive:
-
-```console
-ramdisk$ lsblk
-NAME                        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
-sda                           8:0    0 119.2G  0 disk  
-```
-
-On my machine, that's `/dev/sda`, but yours may be different. Install
-CoreOS to that device, specifying our minimal cloud-init:
+Finally, we're ready to install CoreOS to the server's hard
+drive. First, identify the appropriate block device for the CoreOS
+hard drive. If you're not sure, inspect available storage devices with
+`lsblk`. On my machine, that's `/dev/sda`, but yours may be
+different. Install CoreOS to that device, specifying our minimal
+cloud-init:
 
 ```console
 ramdisk$ sudo coreos-install -d /dev/sda -c cloud-init
