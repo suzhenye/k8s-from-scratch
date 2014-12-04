@@ -30,12 +30,15 @@ as I work towards this goal.
 
 # General structure
 
-We start by bringing up a full cluster on a single machine:
+First, there's a bit of initial setup we need to do:
 
 1. [Collect prerequisites](/Prerequisites.md).
 1. [Create security roots of trust](/Security.md).
-1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
-1. [Bring up base services](/Base-Services-Bringup.md).
+
+Then, we bring up a full cluster on a single machine.
+
+1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md) (with etcd)
+1. [Configure base services](/Base-Services-Bringup.md).
 1. Bring up Ceph on fleet.
 1. Bring up k8s master on fleet.
 1. Bring up k8s minion on fleet.
@@ -44,10 +47,11 @@ At this point, we have a working single-machine k8s
 cluster. Reliability is currently nil, due to the lack of replication,
 but the foundation is in place for us to scale out.
 
-From here, we can add a new machine with a simplified procedure:
+From here, we can start scaling out the cluster:
 
-1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md).
-1. [Bring up base services](/Base-Services-Bringup.md).
+1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md) (with etcd
+   until quorum is reached, then without).
+1. [Configure base services](/Base-Services-Bringup.md).
 
 At this point, fleet takes over and schedules Ceph and a k8s minion,
 completing the bringup for us.
