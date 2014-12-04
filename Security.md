@@ -85,12 +85,8 @@ client-etcd communication:
 admin$ export ETCD_PEER_CA=$CLUSTER_DIR/ca/etcd/peer
 admin$ export ETCD_CLIENT_CA=$CLUSTER_DIR/ca/etcd/client
 admin$ mkdir -p $ETCD_PEER_CA $ETCD_CLIENT_CA
-admin$ cd $ETCD_PEER_CA
-admin$ etcd-ca init
-admin$ etcd-ca export >peering.ca
-admin$ cd $ETCD_CLIENT_CA
-admin$ etcd-ca init
-admin$ etcd-ca export >client.ca
+admin$ etcd-ca --depot-path=$ETCD_PEER_CA init
+admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA init
 ```
 
 Again, good passphrases are recommended.
