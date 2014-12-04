@@ -75,3 +75,22 @@ admin$ echo "@cert-authority * $(cat $SSH_CA/machine_ca.pub)" >>~/.ssh/known_hos
 ```
 
 And with that, SSH root of trust setup is done.
+
+## Etcd CA
+
+Etcd needs two CAs: one for peering between etcd replicas, and one for
+client-etcd communication:
+
+```console
+admin$ export ETCD_PEER_CA=$CLUSTER_DIR/ca/etcd/peer
+admin$ export ETCD_CLIENT_CA=$CLUSTER_DIR/ca/etcd/client
+admin$ mkdir -p $ETCD_PEER_CA $ETCD_CLIENT_CA
+admin$ cd $ETCD_PEER_CA
+admin$ etcd-ca init
+admin$ etcd-ca export >peering.ca
+admin$ cd $ETCD_CLIENT_CA
+admin$ etcd-ca init
+admin$ etcd-ca export >client.ca
+```
+
+Again, good passphrases are recommended.

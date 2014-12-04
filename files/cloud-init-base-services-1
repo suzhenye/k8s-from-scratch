@@ -1,0 +1,18 @@
+#cloud-config
+
+hostname: {{.hostname}}
+ssh_authorized_keys:
+- cert-authority {{.ssh_key}}
+manage_etc_hosts: localhost
+coreos:
+  etcd:
+    addr: {{.ip_address}}:4001
+    peer_addr: {{.ip_address}}:7001
+    bind_addr: 0.0.0.0
+    peer_bind_addr: 0.0.0.0
+    peer_ca_file: /etc/etcd/peering.ca
+    peer_cert_file: /etc/etcd/peering.crt
+    peer_key_file: /etc/etcd/peering.key
+  units:
+    - name: etcd.service
+      command: start
