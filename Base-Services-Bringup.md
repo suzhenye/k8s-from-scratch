@@ -55,3 +55,68 @@ of core01:
 ```console
 admin$ curl http://$CORE01:4001/v2/leader
 ```
+
+## Bring up Flannel
+
+Flannel provides a virtual network substrate across hosts, and
+interfaces with Kubernetes to provide the network plumbing it
+requires. Turning it on is a simple matter of committing its
+configuration to etcd and modifying cloud-init to start the
+daemon. First, let's set the configuration in etcd:
+
+```console
+core01$ etcdctl set /coreos.com/network/config '{"Network": "10.0.0.0/8"}'
+```
+
+To enable flannel, just add the following to
+`/var/lib/coreos-install/user_data` in the units section:
+
+```yaml
+- name: flanneld.service
+  command: start
+```
+
+Note: this currently only works out of the box with the alpha build of
+CoreOS. I'm strategizing on it becoming the stable release soon enough
+that I won't care.
+
+Because flannel fairly drastically changes the network and daemon
+configuration, applying the cloud-init file again at runtime is not
+good, you'll need to reboot the machine.
+
+```console
+core01$ sudo reboot
+```
+
+## Bring up fleet
+
+The final brick before starting Kubernetes is Fleet. Fleet is another
+cluster scheduling system that's somewhat less elaborate than
+Kubernetes. We're going to use it in two ways: first, Kubernetes uses
+fleet's metadata system to get information on machines in the
+cluster. Second, we'll use Fleet to schedule the components of Ceph
+and Kubernetes on the cluster. That way, most of our cluster job
+management will be automatic even at the layers below Kubernetes.
+
+Starting fleet is trivial: enable it in
+`/var/lib/coreos-install/user_data`, just like flannel.
+
+```yaml
+- name: fleet.service
+  command: start
+```
+
+This will start fleet when the machine reboots. To start it this first
+time, we'll just launch it manually:
+
+```console
+core01$ sudo systemctl start fleet
+```
+
+Fleet should now be running. You can verify this with the `fleetctl` tool:
+
+```console
+core01$ fleetctl list-machines
+```
+
+This should list a single machine, core01.
