@@ -1,5 +1,0 @@
-#cloud-config
-
-hostname: {{.hostname}}
-ssh_authorized_keys:
-- cert-authority {{.ssh_key}}

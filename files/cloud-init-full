@@ -1,0 +1,87 @@
+#cloud-config
+
+hostname: {{.hostname}}
+ssh_authorized_keys:
+- cert-authority {{.ssh_key}}
+users:
+  - name: root
+    ssh-authorized-keys: cert-authority {{.ssh_key}}
+manage_etc_hosts: localhost
+coreos:
+  etcd:
+    addr: {{.ip_address}}:4001
+    peer-addr: {{.ip_address}}:7001
+    bind-addr: 0.0.0.0
+    peer-bind-addr: 0.0.0.0
+    peer-ca-file: /etc/etcd/peering.ca
+    peer-cert-file: /etc/etcd/peering.crt
+    peer-key-file: /etc/etcd/peering.key
+    cert-file: /etc/etcd/client.crt
+    key-file: /etc/etcd/client.key
+  flannel:
+    etcd-endpoint: https://127.0.0.1:4001
+  fleet:
+    etcd-servers: https://127.0.0.1:4001
+    metadata: {{.metadata}}
+  units:
+    - name: fleet.service
+      command: start
+    - name: flanneld.service
+      command: start
+write_files:
+  - path: /etc/profile.d/etcd.sh
+    owner: root:root
+    permissions: 0644
+    content: |
+      export FLEETCTL_ENDPOINT=https://localhost:4001
+      export ETCDCTL_PEERS=https://localhost:4001
+  - path: /run/systemd/system/flanneld.service.d/https.conf
+    owner: root:root
+    permissions: 0644
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/libexec/sdnotify-proxy /run/flannel/sd.sock /usr/bin/docker run --net=host --privileged=true --rm -v /run/flannel:/run/flannel -e NOTIFY_SOCKET=/run/flannel/sd.sock quay.io/coreos/flannel:${FLANNEL_VER} /opt/bin/flanneld --ip-masq=true --etcd-endpoint=https://127.0.0.1:4001
+  - path: /run/systemd/system/etcd.service.d/require-config.conf
+    owner: etcd:etcd
+    permissions: 0644
+    content: |
+      [Unit]
+      ConditionPathExists=/etc/etcd/peering.ca
+      ConditionPathExists=/etc/etcd/peering.crt
+      ConditionPathExists=/etc/etcd/peering.key
+      ConditionPathExists=/etc/etcd/client.crt
+      ConditionPathExists=/etc/etcd/client.key
+  - path: /run/systemd/system/flanneld.service.d/restart.conf
+    owner: root:root
+    permissions: 0644
+    content: |
+      [Service]
+      Restart=always
+      RestartSec=10s
+  - path: /etc/etcd/peering.ca
+    owner: etcd:etcd
+    permissions: 0644
+    content: "{{.peering_ca | js}}"
+  - path: /etc/etcd/client.ca
+    owner: etcd:etcd
+    permissions: 0644
+    content: "{{.client_ca | js}}"
+{{if .peering_cert}}
+  - path: /etc/etcd/peering.crt
+    owner: etcd:etcd
+    permissions: 0600
+    content: "{{.peering_cert | js}}"
+  - path: /etc/etcd/peering.key
+    owner: etcd:etcd
+    permissions: 0600
+    content: "{{.peering_key | js}}"
+  - path: /etc/etcd/client.crt
+    owner: etcd:etcd
+    permissions: 0600
+    content: "{{.client_cert | js}}"
+  - path: /etc/etcd/client.key
+    owner: etcd:etcd
+    permissions: 0600
+    content: "{{.client_key | js}}"
+{{end}}

@@ -62,25 +62,49 @@ ramdisk$ sudo passwd core
 The password need not be fancy, it won't persist past the installation
 phase.
 
-## Create and copy a basic cloud-init file.
+## Create etcd certificates
 
-We're going to start with the bare minimum cloud-init file:
+If the machine you're setting up is going to be an etcd server for the
+cluster, you need to generate some certificates for it:
 
 ```console
-admin$ gotmpl $K8SFS/files/cloud-init-minimal \
-    hostname core01 \
-    ssh_key "$(cat $SSH_CA/user_ca.pub)" \
-    >$CLUSTER_DIR/cloud-init
+admin$ etcd-ca --depot-path=$ETCD_PEER_CA new-cert --passphrase "" --ip $CORE01 core01
+admin$ etcd-ca --depot-path=$ETCD_PEER_CA sign core01
+admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA new-cert --passphrase "" --ip $CORE01 core01
+admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA sign core01
 ```
 
-This'll produce the following cloud-init file:
+## Create and copy a cloud-init file.
 
-```yaml
-#cloud-config
+We're going to use a cloud-init that requires a few per-machine
+tweaks. The invocation for a machine not running etcd is:
 
-hostname: core01
-ssh_authorized_keys
-- cert-authority ssh-rsa AAAAB...w== user-ca
+```console
+admin$ gotmpl $K8SFS/files/cloud-init-full \
+  hostname core01 \
+  ssh_key "$(cat $SSH_CA/user_ca.pub)" \
+  ip_address 192.168.42.10 \
+  peering_ca "$(etcd-ca --depot-path=$ETCD_PEER_CA chain)" \
+  client_ca "$(etcd-ca --depot-path=$ETCD_CLIENT_CA chain)" \
+  metadata "" \
+  >$CLUSTER_DIR/cloud-init
+```
+
+And for an etcd machine, it's the same with a few more arguments:
+
+```console
+admin$ gotmpl $K8SFS/files/cloud-init-full \
+  hostname core01 \
+  ssh_key "$(cat $SSH_CA/user_ca.pub)" \
+  ip_address 192.168.42.10 \
+  peering_ca "$(etcd-ca --depot-path=$ETCD_PEER_CA chain)" \
+  client_ca "$(etcd-ca --depot-path=$ETCD_CLIENT_CA chain)" \
+  metadata "" \
+  peering_cert "$(etcd-ca --depot-path=$ETCD_PEER_CA export --passphrase "" --insecure core01 | tar -xO core01.crt)" \
+  peering_key "$(etcd-ca --depot-path=$ETCD_PEER_CA export --passphrase "" --insecure core01 | tar -xO core01.key.insecure)" \
+  client_cert "$(etcd-ca --depot-path=$ETCD_CLIENT_CA export --passphrase "" --insecure core01 | tar -xO core01.crt)" \
+  client_key "$(etcd-ca --depot-path=$ETCD_CLIENT_CA export --passphrase "" --insecure core01 | tar -xO core01.key.insecure)" \
+  >$CLUSTER_DIR/cloud-init
 ```
 
 Copy this file to the CoreOS ramdisk:
@@ -102,6 +126,10 @@ cloud-init:
 ```console
 ramdisk$ sudo coreos-install -d /dev/sda -c cloud-init
 ```
+
+Note: until flannel support is released to stable, you may want to
+install the alpha version of CoreOS instead, by adding `-C alpha` to
+the above.
 
 ## Set up SSH host certs
 
@@ -161,7 +189,7 @@ ramdisk$ sudo -s
 ramdisk# cp /usr/share/ssh/sshd_config /mnt/etc/ssh/sshd_config
 ramdisk# for i in /mnt/etc/ssh/*-cert.pub; do \
            echo "HostCertificate /etc/ssh/$(basename $i)" >>/mnt/etc/ssh/sshd_config; \
-           done
+         done
 ramdisk# exit
 ```
 
