@@ -68,9 +68,9 @@ If the machine you're setting up is going to be an etcd server for the
 cluster, you need to generate some certificates for it:
 
 ```console
-admin$ etcd-ca --depot-path=$ETCD_PEER_CA new-cert --passphrase "" --ip $CORE01 core01
+admin$ etcd-ca --depot-path=$ETCD_PEER_CA new-cert --passphrase "" --ip $INSTALLER_IP core01
 admin$ etcd-ca --depot-path=$ETCD_PEER_CA sign core01
-admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA new-cert --passphrase "" --ip $CORE01 core01
+admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA new-cert --passphrase "" --ip $INSTALLER_IP core01
 admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA sign core01
 ```
 
