@@ -60,13 +60,6 @@ Finally, we'll want a directory in which to store a small number of files:
 admin$ mkdir ~/cluster
 ```
 
-It's a good idea to version control this directory, if you're into that:
-
-```console
-admin$ git init
-Initialized empty Git repository in /home/dave/cluster/.git/
-```
-
 ## Environment variables
 
 We're going to be referring to a number of directories and names
