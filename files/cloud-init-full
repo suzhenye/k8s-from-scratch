@@ -96,3 +96,7 @@ write_files:
     permissions: 0600
     content: "{{.client_key | js}}"
 {{end}}
+
+# Local Variables:
+# mode: yaml
+# End:
