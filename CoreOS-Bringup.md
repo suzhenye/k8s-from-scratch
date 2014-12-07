@@ -80,7 +80,7 @@ We're going to use a cloud-init that requires a few per-machine
 tweaks. The invocation for a machine not running etcd is:
 
 ```console
-admin$ gotmpl $K8SFS/files/cloud-init-full \
+admin$ gotmpl $K8SFS_FILES/cloud-init-full \
   hostname core01 \
   ssh_key "$(cat $SSH_CA/user_ca.pub)" \
   ip_address $INSTALLER_IP \
@@ -93,7 +93,7 @@ admin$ gotmpl $K8SFS/files/cloud-init-full \
 And for an etcd machine, it's the same with a few more arguments:
 
 ```console
-admin$ gotmpl $K8SFS/files/cloud-init-full \
+admin$ gotmpl $K8SFS_FILES/cloud-init-full \
   hostname core01 \
   ssh_key "$(cat $SSH_CA/user_ca.pub)" \
   ip_address 192.168.42.10 \
