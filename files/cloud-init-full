@@ -33,7 +33,7 @@ coreos:
         Requires=early-docker.service
         After=early-docker.service
         [Service]
-        ExecStart=/usr/bin/docker run --net=host -v /var/lib/ceph/mon/ceph-%i:/var/lib/ceph/mon/ceph-%i -i %i -d
+        ExecStart=/usr/bin/docker run --net=host -v /var/lib/ceph/mon/ceph-%i:/var/lib/ceph/mon/ceph-%i ulexus/ceph-base /usr/bin/ceph-mon -i %i -d
         Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
         Restart=always
         RestartSec=10s
