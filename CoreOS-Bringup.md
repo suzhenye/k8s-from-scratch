@@ -83,7 +83,7 @@ tweaks. The invocation for a machine not running etcd is:
 admin$ gotmpl $K8SFS/files/cloud-init-full \
   hostname core01 \
   ssh_key "$(cat $SSH_CA/user_ca.pub)" \
-  ip_address 192.168.42.10 \
+  ip_address $INSTALLER_IP \
   peering_ca "$(etcd-ca --depot-path=$ETCD_PEER_CA chain)" \
   client_ca "$(etcd-ca --depot-path=$ETCD_CLIENT_CA chain)" \
   metadata "" \
