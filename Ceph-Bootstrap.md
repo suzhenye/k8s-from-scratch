@@ -46,3 +46,21 @@ appropriate instance:
 core01$ sudo systemctl enable ceph-mon@a.service
 core01$ sudo systemctl start ceph-mon@a.service
 ```
+
+## Create a local Ceph configuration for administration
+
+```console
+admin$ gotmpl $K8SFS_FILES/ceph.conf \
+  ip_address $CORE01 \
+  ceph_ca $CEPH_CA \
+  >$CLUSTER_DIR/ceph.conf
+admin$ echo 'export CEPH_CONF=$CLUSTER_DIR/ceph.conf' >>$CLUSTER_DIR/env.sh
+admin$ source $CLUSTER_DIR/env.sh
+```
+
+Now, you should be able to run the `ceph` tool and get the cluster
+state:
+
+```console
+admin$ ceph -s
+```
