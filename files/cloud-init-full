@@ -22,12 +22,23 @@ coreos:
     etcd-endpoint: https://127.0.0.1:4001
   fleet:
     etcd-servers: https://127.0.0.1:4001
-    metadata: {{.metadata}}
   units:
     - name: fleet.service
       command: start
     - name: flanneld.service
       command: start
+    - name: ceph-mon@.service
+      content: |
+        [Unit]
+        Requires=early-docker.service
+        After=early-docker.service
+        [Service]
+        ExecStart=/usr/bin/docker run --net=host -v /var/lib/ceph/ceph-%i:/var/lib/ceph/ceph-%i -i %i -d
+        Environment="DOCKER_HOST=unix:///var/run/early-docker.sock"
+        Restart=always
+        RestartSec=10s
+        [Install]
+        WantedBy=multi-user.target
 write_files:
   - path: /etc/profile.d/etcd.sh
     owner: root:root

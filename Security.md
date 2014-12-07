@@ -90,3 +90,20 @@ admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA init
 ```
 
 Again, good passphrases are recommended.
+
+## Ceph keys
+
+Ceph needs an admin key to run the cluster.
+
+```console
+admin$ export CEPH_CA=$CLUSTER_DIR/ca/ceph
+admin$ mkdir $CEPH_CA
+admin$ ceph-authtool --create-keyring $CEPH_CA/admin.key \
+    --gen-key -n client.admin --set-uid=0 \
+    --cap mon 'allow *' \
+    --cap osd 'allow *' \
+    --cap mds 'allow *'
+```
+
+Note that this key (and all Ceph keys) are cleartext symmetric
+keys. Protect them well!

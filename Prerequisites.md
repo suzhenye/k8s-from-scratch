@@ -49,9 +49,10 @@ If you do want to use the prewritten files, you'll also need a tiny tool, `gotmp
 admin$ go install github.com/danderson/gotmpl
 ```
 
-If you're on another architecture, or prefer to build your own, you
-can instead grab [the repository](https://github.com/danderson/gotmpl)
-and build from that.
+We'll be running Ceph on the cluster, so we'll need to install Ceph on
+our admin machine as well, to get access to some of the tools for
+things like key management. How to do so depends on your package
+manager, so you're on your own here.
 
 Finally, we'll want a directory in which to store a small number of files:
 

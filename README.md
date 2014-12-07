@@ -39,7 +39,7 @@ Then, we bring up a full cluster on a single machine.
 
 1. [Bring up CoreOS on the bare metal](/CoreOS-Bringup.md) (with etcd)
 1. [Configure base services](/Base-Services-Bringup.md).
-1. Bring up Ceph on fleet.
+1. [Bootstrap the Ceph cluster](/Ceph-Bootstrap.md).
 1. Bring up k8s master on fleet.
 1. Bring up k8s minion on fleet.
 
