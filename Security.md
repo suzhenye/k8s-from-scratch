@@ -27,7 +27,6 @@ machines, and user certificates cannot be used to impersonate
 machines.
 
 ```console
-admin$ export SSH_CA=$CLUSTER_DIR/ca/ssh
 admin$ mkdir -p $SSH_CA
 admin$ ssh-keygen -f $SSH_CA/machine_ca -C machine-ca
 admin$ ssh-keygen -f $SSH_CA/user_ca -C user-ca
@@ -82,8 +81,6 @@ Etcd needs two CAs: one for peering between etcd replicas, and one for
 client-etcd communication:
 
 ```console
-admin$ export ETCD_PEER_CA=$CLUSTER_DIR/ca/etcd/peer
-admin$ export ETCD_CLIENT_CA=$CLUSTER_DIR/ca/etcd/client
 admin$ mkdir -p $ETCD_PEER_CA $ETCD_CLIENT_CA
 admin$ etcd-ca --depot-path=$ETCD_PEER_CA init
 admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA init
@@ -96,7 +93,6 @@ Again, good passphrases are recommended.
 Ceph needs an admin key to run the cluster.
 
 ```console
-admin$ export CEPH_CA=$CLUSTER_DIR/ca/ceph
 admin$ mkdir $CEPH_CA
 admin$ ceph-authtool --create-keyring $CEPH_CA/admin.key \
     --gen-key -n client.admin --set-uid=0 \

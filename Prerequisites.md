@@ -35,15 +35,8 @@ Given that we're starting from scratch, we don't have many
 prerequisites, just a few small tools to make our life slightly
 easier.
 
-The first is this repository, which contains a few prewritten files
-that you can use. You're also welcome to write them yourself, of
-course.
-
-```console
-admin$ git clone github.com/danderson/k8s-from-scratch
-```
-
-If you do want to use the prewritten files, you'll also need a tiny tool, `gotmpl`.
+We'll be generating some config files from pre-written templates. For
+this, we'll use `gotmpl`, a tiny templating tool.
 
 ```console
 admin$ go install github.com/danderson/gotmpl
@@ -54,22 +47,35 @@ our admin machine as well, to get access to some of the tools for
 things like key management. How to do so depends on your package
 manager, so you're on your own here.
 
-Finally, we'll want a directory in which to store a small number of files:
+## Cluster directory
+
+We'll want a directory in which to store some settings:
 
 ```console
 admin$ mkdir ~/cluster
 ```
 
+And the first thing we'll put in this directory is a copy of this
+repository, so we can use its template files:
+
+```console
+admin$ git clone github.com/danderson/k8s-from-scratch ~/cluster/k8sfs
+```
+
 ## Environment variables
 
 We're going to be referring to a number of directories and names
-during bringup, and to keep it generic we're going to define a few
-environment variables that we'll refer to in the instructions.
+during bringup, and to keep things fairly compact we're going to
+define a few environment variables that we'll refer to in the
+instructions.
+
+To make it easier to source all the right things, we'll use a small
+shell file to record variables:
 
 ```console
-admin$ export CLUSTER_DIR=~/cluster
-admin$ export K8SFS=~/k8s-from-scratch
+admin$ cp ~/cluster/k8sfs/files/env.sh ~/cluster/env.sh
+admin$ source ~/cluster/env.sh
 ```
 
-Keep a look out for other variables that we'll define for some of the
-steps.
+Keep a look out for other variables that we'll add to this file
+throughout the bringup.

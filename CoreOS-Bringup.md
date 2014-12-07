@@ -218,7 +218,7 @@ And just for cleanliness, let's promote the environment variable we
 were using:
 
 ```console
-admin$ export CORE01=$INSTALLER_IP
+admin$ echo "export CORE01=$INSTALLER_IP" >>$CLUSTER_DIR/env.sh
 admin$ unset INSTALLER_IP
 ```
 
