@@ -96,7 +96,7 @@ And for an etcd machine, it's the same with a few more arguments:
 admin$ gotmpl $K8SFS_FILES/cloud-init-full \
   hostname core01 \
   ssh_key "$(cat $SSH_CA/user_ca.pub)" \
-  ip_address 192.168.42.10 \
+  ip_address $INSTALLER_IP \
   peering_ca "$(etcd-ca --depot-path=$ETCD_PEER_CA chain)" \
   client_ca "$(etcd-ca --depot-path=$ETCD_CLIENT_CA chain)" \
   metadata "" \
