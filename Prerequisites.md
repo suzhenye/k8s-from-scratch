@@ -43,11 +43,10 @@ course.
 admin$ git clone github.com/danderson/k8s-from-scratch
 ```
 
-If you do want to use the prewritten files, you'll also need a tiny tool, `gotmpl`. You can grab a prebuilt x86_64 binary from github:
+If you do want to use the prewritten files, you'll also need a tiny tool, `gotmpl`.
 
 ```console
-admin$ wget https://github.com/danderson/gotmpl/releases/download/v0.1/gotmpl
-admin$ chmod +x gotmpl
+admin$ go install github.com/danderson/gotmpl
 ```
 
 If you're on another architecture, or prefer to build your own, you
