@@ -27,7 +27,7 @@ admin$ rm $CEPH_CA/mon.keyring $CLUSTER_DIR/monmap
 ```
 
 ```console
-core01$ sudo mkdir -p /var/lib/ceph/mon/mon-a
+core01$ sudo mkdir -p /var/lib/ceph/mon/ceph-a
 core01$ sudo mv -f mon.keyring monmap /var/lib/ceph
 core01$ sudo docker run -v /var/lib/ceph:/var/lib/ceph ulexus/ceph-base \
     /usr/bin/ceph-mon --mkfs -i a \
