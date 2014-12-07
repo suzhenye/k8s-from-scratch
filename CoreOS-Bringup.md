@@ -220,6 +220,7 @@ were using:
 ```console
 admin$ echo "export CORE01=$INSTALLER_IP" >>$CLUSTER_DIR/env.sh
 admin$ source $CLUSTER_DIR/env.sh
+admin$ ssh-keygen -R $INSTALLER_IP
 admin$ unset INSTALLER_IP
 ```
 
