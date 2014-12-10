@@ -62,22 +62,10 @@ ramdisk$ sudo passwd core
 The password need not be fancy, it won't persist past the installation
 phase.
 
-## Create etcd certificates
-
-If the machine you're setting up is going to be an etcd server for the
-cluster, you need to generate some certificates for it:
-
-```console
-admin$ etcd-ca --depot-path=$ETCD_PEER_CA new-cert --passphrase "" --ip $INSTALLER_IP core01
-admin$ etcd-ca --depot-path=$ETCD_PEER_CA sign core01
-admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA new-cert --passphrase "" --ip $INSTALLER_IP core01
-admin$ etcd-ca --depot-path=$ETCD_CLIENT_CA sign core01
-```
-
 ## Create and copy a cloud-init file.
 
 We're going to use a cloud-init that requires a few per-machine
-tweaks. The invocation for a machine not running etcd is:
+tweaks.
 
 ```console
 admin$ gotmpl $K8SFS_FILES/cloud-init-full \
@@ -87,23 +75,6 @@ admin$ gotmpl $K8SFS_FILES/cloud-init-full \
   peering_ca "$(etcd-ca --depot-path=$ETCD_PEER_CA chain)" \
   client_ca "$(etcd-ca --depot-path=$ETCD_CLIENT_CA chain)" \
   metadata "" \
-  >$CLUSTER_DIR/cloud-init
-```
-
-And for an etcd machine, it's the same with a few more arguments:
-
-```console
-admin$ gotmpl $K8SFS_FILES/cloud-init-full \
-  hostname core01 \
-  ssh_key "$(cat $SSH_CA/user_ca.pub)" \
-  ip_address $INSTALLER_IP \
-  peering_ca "$(etcd-ca --depot-path=$ETCD_PEER_CA chain)" \
-  client_ca "$(etcd-ca --depot-path=$ETCD_CLIENT_CA chain)" \
-  metadata "" \
-  peering_cert "$(etcd-ca --depot-path=$ETCD_PEER_CA export --passphrase "" --insecure core01 | tar -xO core01.crt)" \
-  peering_key "$(etcd-ca --depot-path=$ETCD_PEER_CA export --passphrase "" --insecure core01 | tar -xO core01.key.insecure)" \
-  client_cert "$(etcd-ca --depot-path=$ETCD_CLIENT_CA export --passphrase "" --insecure core01 | tar -xO core01.crt)" \
-  client_key "$(etcd-ca --depot-path=$ETCD_CLIENT_CA export --passphrase "" --insecure core01 | tar -xO core01.key.insecure)" \
   >$CLUSTER_DIR/cloud-init
 ```
 
@@ -227,4 +198,5 @@ admin$ unset INSTALLER_IP
 If you changed the DHCP lease settings earlier, you may need to adjust
 this to specify the new IP for the machine.
 
-That's it! Basic CoreOS bringup is done. Next up is [bringing up base services](/Base-Services-Bringup.md).
+That's it! Basic CoreOS bringup is done. Next up is
+[bringing up base services](/Base-Services-Bringup.md).

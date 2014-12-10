@@ -79,24 +79,6 @@ write_files:
     owner: etcd:etcd
     permissions: 0644
     content: "{{.client_ca | js}}"
-{{if .peering_cert}}
-  - path: /etc/etcd/peering.crt
-    owner: etcd:etcd
-    permissions: 0600
-    content: "{{.peering_cert | js}}"
-  - path: /etc/etcd/peering.key
-    owner: etcd:etcd
-    permissions: 0600
-    content: "{{.peering_key | js}}"
-  - path: /etc/etcd/client.crt
-    owner: etcd:etcd
-    permissions: 0600
-    content: "{{.client_cert | js}}"
-  - path: /etc/etcd/client.key
-    owner: etcd:etcd
-    permissions: 0600
-    content: "{{.client_key | js}}"
-{{end}}
 
 # Local Variables:
 # mode: yaml
