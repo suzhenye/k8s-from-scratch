@@ -51,7 +51,7 @@ First, let's create ourselves a user certificate:
 ```console
 admin$ ssh-keygen -f ~/.ssh/cluster_admin
 admin$ ssh-keygen -s $SSH_CA/user_ca \
-         -n core -I "Your Name <your.email@example.com>" \
+         -n core,root -I "Your Name <your.email@example.com>" \
          ~/.ssh/cluster_admin.pub
 ```
 
