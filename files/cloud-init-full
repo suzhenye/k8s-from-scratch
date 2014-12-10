@@ -5,7 +5,8 @@ ssh_authorized_keys:
 - cert-authority {{.ssh_key}}
 users:
   - name: root
-    ssh-authorized-keys: cert-authority {{.ssh_key}}
+    ssh-authorized-keys:
+      - cert-authority {{.ssh_key}}
 manage_etc_hosts: localhost
 coreos:
   etcd:
